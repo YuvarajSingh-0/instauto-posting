@@ -1,0 +1,12 @@
+# environment variable.
+.env
+
+# zipped requirement modules for aws lambda deployment
+zip
+instauto.zip
+
+# virtualenv
+instauto
+
+# vscode
+.vscode
