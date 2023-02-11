@@ -10,9 +10,10 @@ import uuid
 load_dotenv()
 
 uid = str(uuid.uuid4())
-ACCESS_KEY = os.getenv("ACCESS_KEY")
-ACCESS_ID = os.getenv("ACCESS_ID")
-BUCKET = os.getenv("BUCKET")
+SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+BUCKET = os.getenv("S3_BUCKET")
+FB_ACCESS_TOKEN = os.getenv("FB_ACCESS_TOKEN")
 
 
 def generate_image():
@@ -42,8 +43,8 @@ def generate_image():
 
 
 def upload_image():
-    client_s3 = boto3.client('s3', aws_access_key_id=ACCESS_ID,
-                             aws_secret_access_key=ACCESS_KEY)
+    client_s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+                             aws_secret_access_key=SECRET_KEY)
     client_s3.upload_file('output.jpg'.format(uid), BUCKET, 'output-{}.jpg'.format(uid), ExtraArgs={
         'ContentType': 'image/jpeg'})
 
@@ -58,11 +59,14 @@ def publish_image():
             continue
         caption = "%23" + tag + "%20" + caption
     # print(caption)
-    response = urllib.request.Request("https://graph.facebook.com/v15.0/17841448545960382/media?image_url={}&caption={}&access_token=EAAHTzTodKeUBAKXkLFoIrNZAeeAKpucIO63qxA2tFJg3ZC5OK34kKT92W0i84maWfTP1OUu98dzRkZAd9fTlmXXaZCqdZCDOXuMuJa0mf9BocJvHq3DZBwNlDjUGt09TyWOK56LJBZB8jUryJErq9GbV0MDnHZCcIREQZCtkSumVNUUa0u9TVhvMN".format(image_url, caption), method="POST")
+    response = urllib.request.Request(
+        "https://graph.facebook.com/v15.0/17841448545960382/media?image_url={}&caption={}&access_token={}".format(image_url, caption, FB_ACCESS_TOKEN), method="POST")
+    # print(response.__dict__)
     r = urllib.request.urlopen(response)
     creation_id = json.loads(r.read().decode("utf-8")).get("id")
     # print(creation_id)
-    r = urllib.request.Request("https://graph.facebook.com/v15.0/17841448545960382/media_publish?creation_id={}&access_token=EAAHTzTodKeUBAKXkLFoIrNZAeeAKpucIO63qxA2tFJg3ZC5OK34kKT92W0i84maWfTP1OUu98dzRkZAd9fTlmXXaZCqdZCDOXuMuJa0mf9BocJvHq3DZBwNlDjUGt09TyWOK56LJBZB8jUryJErq9GbV0MDnHZCcIREQZCtkSumVNUUa0u9TVhvMN".format(creation_id), method="POST")
+    r = urllib.request.Request(
+        "https://graph.facebook.com/v15.0/17841448545960382/media_publish?creation_id={}&access_token={}".format(creation_id, FB_ACCESS_TOKEN), method="POST")
     urllib.request.urlopen(r)
     # print(r.read().decode("utf-8"))
 
@@ -71,4 +75,4 @@ if __name__ == "__main__":
     generate_image()
     upload_image()
     publish_image()
-    time.sleep(200)
+    # time.sleep(200)
