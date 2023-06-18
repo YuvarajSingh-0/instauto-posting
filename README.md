@@ -35,6 +35,9 @@ To use this project:
 
 Feel free to explore the [___scrivener___](https://www.instagram.com/___scrivener___/) Instagram account for the latest posts!
 
+## Deployment
+The Instagram Auto Posting code is deployed on [PythonAnywhere](https://www.pythonanywhere.com/), a platform that allows hosting and running Python applications in the cloud.
+
 ## Status
 - Current State: :red_circle: **Offline**
 - Reason: API calls became costly in the AWS S3 bucket.
